@@ -1,3 +1,7 @@
+"""
+Forward Euler-based simulation for a driven damped harmonic oscillator.
+"""
+
 
 import numpy as np
 import matplotlib.pyplot as plt
