@@ -1,7 +1,9 @@
+"""
+Forward Euler-based simulation for a population growth model.
+"""
 
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.linalg import inv
 
 
 # System variables

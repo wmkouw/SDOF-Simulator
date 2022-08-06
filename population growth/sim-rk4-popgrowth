@@ -2,7 +2,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.linalg import inv
-
+"""
+Runge-Kutta-based simulation for a population growth model.
+"""
 
 # System variables
 r = 1.0         # Fertility, or growth rate

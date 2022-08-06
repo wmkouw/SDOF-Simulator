@@ -1,0 +1,106 @@
+"""
+Runge-Kutta-based simulation for a predator-prey model (i.e., coupled nonlinear DEs).
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# System variables
+alpha = 1.1     # Prey fertility rate
+beta  = 0.4     # Predator-prey encounter rate
+gamma = 0.4     # Predator growth rate
+delta = 0.1     # Predator death rate
+
+# Time scales
+dt = 0.001
+time = np.arange(0.0, 100.0, dt)
+T = len(time)
+
+def Gx(x,y,t):
+    "Differential equation of prey"
+    return alpha*x - beta*x*y
+
+def Gy(x,y,t):
+    "Differential equation of predator"
+    return delta*x*y - gamma*y
+
+def RK2x(x,y,t,dt, method='midpoint'):
+
+    if method == 'midpoint':
+        K1 = Gx(x,y,t)
+        K2 = Gx(x + K1*dt/2, y, t+dt/2)
+        return dt*K2
+
+    elif method == 'heun':
+        K1 = Gx(x,y,t)
+        K2 = Gx(x + K1*dt, y, t+dt)
+        return dt*(K1+K2)/2
+
+    else:
+        raise Exception("Chosen 'method' unknown. Try 'midpoint' or 'heun'.")
+    
+def RK2y(x,y,t,dt, method='midpoint'):
+
+    if method == 'midpoint':
+        K1 = Gy(x,y,t)
+        K2 = Gy(x,y + K1*dt/2, t+dt/2)
+        return dt*K2
+
+    elif method == 'heun':
+        K1 = Gy(x,y,t)
+        K2 = Gy(x,y + K1*dt, t+dt)
+        return dt*(K1+K2)/2
+
+    else:
+        raise Exception("Chosen 'method' unknown. Try 'midpoint' or 'heun'.")
+
+def RK4x(x,y,t,dt):
+
+    K1 = Gx(x,y,t)
+    K2 = Gx(x + K1*dt/2, y, t+dt/2)
+    K3 = Gx(x + K2*dt/2, y, t+dt/2)
+    K4 = Gx(x + K3*dt, y, t+dt)
+
+    return dt*1/6*(K1 + 2*K2 + 2*K3 + K4)
+
+def RK4y(x,y,t,dt):
+
+    K1 = Gy(x,y,t)
+    K2 = Gy(x,y + K1*dt/2, t+dt/2)
+    K3 = Gy(x,y + K2*dt/2, t+dt/2)
+    K4 = Gy(x,y + K3*dt, t+dt)
+
+    return dt*1/6*(K1 + 2*K2 + 2*K3 + K4)
+
+# Allocate
+x_ = np.zeros((T,1)) # Prey
+y_ = np.zeros((T,1)) # Predator
+
+# Initial state
+x_0 = np.array([10])
+y_0 = np.array([10])
+
+# Define previous timepoint
+x_tmin1 = x_0
+y_tmin1 = y_0
+
+# Time-stepping
+for (ii,t) in enumerate(time):
+
+    # Update prey population
+    x_[ii] = x_tmin1 + RK4x(x_tmin1, y_tmin1, t, dt)
+    
+    # Update predator population
+    y_[ii] = y_tmin1 + RK4y(x_tmin1, y_tmin1, t, dt)
+
+    # Update previous variables
+    x_tmin1 = x_[ii]
+    y_tmin1 = y_[ii]
+
+
+# Plotting
+plt.plot(time, x_, label="prey pop.")
+plt.plot(time, y_, label="predator pop.")
+plt.legend()
+plt.grid(True)
+plt.show()

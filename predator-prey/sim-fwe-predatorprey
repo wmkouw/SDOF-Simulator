@@ -1,0 +1,50 @@
+"""
+Forward Euler-based simulation for a predator-prey model (i.e., coupled nonlinear DEs).
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+# System variables
+alpha = 1.1     # Prey fertility rate
+beta  = 0.4     # Predator-prey encounter rate
+gamma = 0.4     # Predator growth rate
+delta = 0.1     # Predator death rate
+
+dt = 0.001
+time = np.arange(0.0, 100.0, dt)
+T = len(time)
+
+# Allocate
+x_ = np.zeros((T,1)) # Prey
+y_ = np.zeros((T,1)) # Predator
+
+# Initial state
+x_0 = np.array([10])
+y_0 = np.array([10])
+
+# Define previous timepoint
+x_tmin1 = x_0
+y_tmin1 = y_0
+
+# Time-stepping
+for (ii,t) in enumerate(time):
+
+    # Update prey population
+    x_[ii] = x_tmin1 + dt*(alpha*x_tmin1 - beta*x_tmin1*y_tmin1)
+    
+    # Update predator population
+    y_[ii] = y_tmin1 + dt*(delta*x_tmin1*y_tmin1 - gamma*y_tmin1)
+
+    # Update previous variables
+    x_tmin1 = x_[ii]
+    y_tmin1 = y_[ii]
+
+
+# Plotting
+plt.plot(time, x_, label="prey pop.")
+plt.plot(time, y_, label="predator pop.")
+plt.legend()
+plt.grid(True)
+plt.show()
