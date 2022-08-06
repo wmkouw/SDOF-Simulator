@@ -1,0 +1,68 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.linalg import inv
+
+
+# System variables
+r = 1.0         # Fertility, or growth rate
+K = 2.0         # Carrying capacity
+
+dt = 0.1
+time = np.arange(0.0, 20.0, dt)
+T = len(time)
+
+def G(P,t):
+    "Differential equation"
+    return r*P*(1- P/K)
+
+def RK1(P,t,dt):
+    return dt*G(P,t)
+
+def RK2(P,t,dt, method='midpoint'):
+
+    if method == 'midpoint':
+        K1 = G(P,t)
+        K2 = G(P + K1*dt/2, t+dt/2)
+        return dt*K2
+
+    elif method == 'heun':
+        K1 = G(P,t)
+        K2 = G(P + K1*dt, t+dt)
+        return dt*(K1+K2)/2
+
+    else:
+        raise Exception("Chosen 'method' unknown. Try 'midpoint' or 'heun'.")
+    
+def RK4(P,t,dt):
+
+    K1 = G(P,t)
+    K2 = G(P + K1*dt/2, t+dt/2)
+    K3 = G(P + K2*dt/2, t+dt/2)
+    K4 = G(P + K3*dt, t+dt)
+
+    return dt*1/6*(K1 + 2*K2 + 2*K3 + K4)
+
+# Allocate
+P_ = np.zeros((T,1))
+
+# Initial state
+P_0 = np.array([0.01])
+
+# Define previous timepoint
+P_tmin1 = P_0
+
+# Time-stepping
+for (ii,t) in enumerate(time):
+
+    # Update state
+    P_[ii] = P_tmin1 + RK4(P_tmin1,t,dt)
+
+    # Update previous variable
+    P_tmin1 = P_[ii]
+
+
+# Plotting
+plt.plot(time, P_, label="population size")
+plt.grid(True)
+plt.show()
