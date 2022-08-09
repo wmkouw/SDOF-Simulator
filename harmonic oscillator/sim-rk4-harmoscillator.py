@@ -11,9 +11,10 @@ from scipy.linalg import inv
 m = 2.0         # mass
 k = 2.0         # spring stiffness
 c = 0.0         # damping (critical = 2\sqrt(mk) = 4.0)
-
 F0 = 0.0        # amplitude of forcing term
-dt = 0.1      # time step
+
+# Time scales
+dt = 0.1        # time step
 omega = 1.0     # frequency of forcing term
 time = np.arange(0.0, 40.0, dt)
 T = len(time)
@@ -67,7 +68,7 @@ def RK4(y,t,dt):
     K3 = G(y + K2*dt/2, t+dt/2)
     K4 = G(y + K3*dt, t+dt)
 
-    return dt*1/6*(K1 + 2*K2 + 2*K3 + K4)
+    return dt*1/6*(K1 + 2*K2 + 2*K3 + K4)   
 
 # Define previous timepoint
 y_tmin1 = y_0

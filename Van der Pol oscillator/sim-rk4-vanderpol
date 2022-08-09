@@ -1,0 +1,71 @@
+"""
+Runge-Kutta-based simulation for a Van der Pol oscillator.
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# System variables
+mu = -0.1    # dt
+
+# Time scales
+dt = 0.001
+time = np.arange(0.0, 100.0, dt)
+T = len(time)
+
+def G(x,t):
+    "Differential equation"
+    return np.array([x[1], mu*(1-x[0])**2*x[1] - x[0]])
+
+def RK2(x,t,dt, method='midpoint'):
+
+    if method == 'midpoint':
+        K1 = G(x,t)
+        K2 = G(x + K1*dt/2, t+dt/2)
+        return dt*K2
+
+    elif method == 'heun':
+        K1 = G(x,t)
+        K2 = G(x + K1*dt, t+dt)
+        return dt*(K1+K2)/2
+
+    else:
+        raise Exception("Chosen 'method' unknown. Try 'midpoint' or 'heun'.")
+
+def RK4(x,t,dt):
+
+    K1 = G(x,t)
+    K2 = G(x + K1*dt/2, t+dt/2)
+    K3 = G(x + K2*dt/2, t+dt/2)
+    K4 = G(x + K3*dt, t+dt)
+
+    return dt*1/6*(K1 + 2*K2 + 2*K3 + K4)
+
+# Allocate
+x_ = np.zeros((2,T))
+
+# Initial state
+x_0 = np.array([1.0, 0.1])
+
+# Define previous timepoint
+x_tmin1 = x_0
+
+# Time-stepping
+for (k,t) in enumerate(time):
+
+    # Update prey population
+    x_[:,k] = x_tmin1 + RK4(x_tmin1, t, dt)
+
+    # Update previous variables
+    x_tmin1 = x_[:,k]
+
+
+# Plot evolution
+plt.plot(time, x_[0,:], label="state")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Plot phase diageram
+plt.plot(x_[0,:], x_[1,:])
+plt.show()

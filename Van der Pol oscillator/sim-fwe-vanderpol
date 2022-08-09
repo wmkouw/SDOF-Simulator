@@ -1,0 +1,39 @@
+"""
+Forward Euler-based simulation for a Van der Pol oscillator.
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+# System variables
+mu = 0.5    # damping
+
+# Time scales
+dt = 0.0001
+time = np.arange(0.0, 10.0, dt)
+T = len(time)
+
+# Allocate
+x_ = np.zeros((2,T))
+
+# Initial state
+x_0 = np.array([0.0, 1.0])
+
+# Define previous timepoint
+x_tmin1 = x_0
+
+# Time-stepping
+for (k,t) in enumerate(time):
+
+    # Update prey population
+    x_[:,k] = x_tmin1 + dt*np.array([x_tmin1[1], mu*(1-x_tmin1[0])**2*x_tmin1[1] - x_tmin1[0]])
+
+    # Update previous variables
+    x_tmin1 = x_[:,k]
+
+# Plotting
+plt.plot(time, x_[0,:], label="state")
+plt.legend()
+plt.grid(True)
+plt.show()

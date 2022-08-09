@@ -12,6 +12,7 @@ beta  = 0.4     # Predator-prey encounter rate
 gamma = 0.4     # Predator growth rate
 delta = 0.1     # Predator death rate
 
+# Time scales
 dt = 0.001
 time = np.arange(0.0, 100.0, dt)
 T = len(time)
